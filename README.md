@@ -1,3 +1,3 @@
-# Edubot-v2.0
-ПО работы Johnny
+#Johnny
+ПО работы робота телеприсутствия Johnny
 ![Johnny](image/Johnny.jpg)
