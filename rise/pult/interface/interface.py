@@ -7,7 +7,7 @@ import time
 from rise.devices.glass import Glass
 from rise.pult.robot import Johny
 from rise.devices.joystick import Joystick
-from rise.pult.interface.rtspVideo import RtspVideo, VIDEO_IN_LAUNCH
+from rise.pult.interface.rtspVideo import RtspVideo
 
 #from rise.pult.interface.videowindow import VideoWindow
 
@@ -43,21 +43,7 @@ class _SettingsWindow:
     def __videoSwitchClick(self, w, state):
         self._owner.robot.videoState(state)
         time.sleep(1)
-        """
-        try:
-            if state:
-                if self._owner._videoWindow is None:
-                    #self._owner._videoWindow = VideoWindow(self._owner._configuration["robot"]["ip"])
-                    #self._owner._videoWindow.start()
-            else:
-                if self._owner._videoWindow is not None:
-                    self._owner._videoWindow.stop()
-                    del self._owner._videoWindow
-                    self._owner._videoWindow = None
-        except Exception as e:
-            self._owner.printLog("Произошла ошибка при работе с видео: " + str(e))
-        time.sleep(2)
-        """
+
 
     def __confFilePathChange(self, w):
         try:
@@ -83,12 +69,13 @@ class Pult:
         self.__exit = False
         self.robot = Johny(None)
         self._joystick = None
+
+
         self._helmet = Glass("/dev/ttyUSB0")
 
         self.video = RtspVideo()
 
         self._helmet.connect("READ", lambda y, p, r: None)
-
         self._helmet.start()
 
         self._builder = Gtk.Builder()
@@ -145,8 +132,13 @@ class Pult:
                 self.robot.connect()
                 self._isConnected = True
                 self.printLog("Попытка подключения удалась")
-                #self._videoWindow =  (self._configuration["robot"]["ip"])
-                self.video.start(VIDEO_IN_LAUNCH)
+
+
+
+                self._videoIP = (self._configuration["robot"]["ip"])
+                self.video.start(self._videoIP)
+
+
 
                 time.sleep(1)
                 #self._videoWindow.start()
@@ -236,12 +228,6 @@ class Pult:
         self._joystick = Joystick()
         self._joystick.open(path)
         try:
-            #temp = self._configuration["joystick"]["SET_HELMET_ZERO_BTN"]
-            #_ = self._joystick.buttons[temp]
-            #temp = self._configuration["joystick"]["ADD_SPEED_BTN"]
-            #_ = self._joystick.buttons[temp]
-            #temp = self._configuration["joystick"]["SUB_SPEED_BTN"]
-            #_ = self._joystick.buttons[temp]
             temp = self._configuration["joystick"]["ROTATE_AXIS"]
             _ = self._joystick.axis[temp]
             temp = self._configuration["joystick"]["MOVE_AXIS"]
@@ -250,14 +236,6 @@ class Pult:
             self.printLog("Не получается найти на джойстике: " + temp)
             self.__closeJoystick()
         else:
-            #self._joystick.onButtonClick(self._configuration["joystick"]["SET_HELMET_ZERO_BTN"],
-            #                             lambda x: self._helmet.setZeroNow() if x else None)
-            #self._joystick.onButtonClick(self._configuration["joystick"]["ADD_SPEED_BTN"],
-            #                             lambda x: self.robot.addToSpeed(
-            #                                 self._configuration["joystick"]["SPEED_CHANGE_STEP"]) if x else None)
-            #self._joystick.onButtonClick(self._configuration["joystick"]["SUB_SPEED_BTN"],
-            #                             lambda x: self.robot.addToSpeed(
-            #                                 -self._configuration["joystick"]["SPEED_CHANGE_STEP"]) if x else None)
             self._joystick.start()
 
     def __closeJoystick(self):
@@ -277,7 +255,7 @@ class Pult:
                     angle = self._helmet.angleHead
                     yaw = int(angle[0])
                     pitch = int(angle[1])
-                    roll = int(angle[2])
+                    roll = int(-angle[2])
                     # print(yaw, pitch, roll)
                     self.robot.setHeadPosition(yaw, pitch, roll)
                 except BrokenPipeError:
