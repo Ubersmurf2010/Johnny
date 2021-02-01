@@ -3,6 +3,7 @@
 import threading
 import can
 import time
+import RPi.GPIO as GPIO
 from rise.cannet.bot import Robot
 from rise.board.robothandle import JohnyHandle
 from rise.rtx.urtxsocket import TcpServer
@@ -101,6 +102,26 @@ def th():
         time.sleep(1)
 
 
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(4, GPIO.OUT)
+def lamp():
+    global onlineCount
+    while (True):
+        if onlineCount > 3:
+            GPIO.output(4, True)
+            time.sleep(1)
+            GPIO.output(4, False)
+            time.sleep(1)
+        else:
+            GPIO.output(4, True)
+            time.sleep(0.2)
+            GPIO.output(4, False)
+            time.sleep(0.2)
+
+
+
+
+
 server.subscribe(0, recvOnline)
 server.subscribe(1, recvError)
 server.subscribe(2, recvPosition)
@@ -112,6 +133,7 @@ server.subscribe("onReceive", onReceive)
 server.start()
 robot.start()
 threading.Thread(daemon=True, target=th).start()
+threading.Thread(daemon=True, target=lamp).start()
 
 while True:
     server.connect(None)  # подключаемся в цикле, т.к. один раз запускаем скрипт на все время работы робота
