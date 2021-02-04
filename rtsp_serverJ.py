@@ -70,10 +70,13 @@ def getIP():
     res = os.popen('hostname -I | cut -d\' \' -f1').readline().replace('\n','') #получаем IP, удаляем \n
     return res
 
-# Возвращает температуру процессора
+
+#######################################
+"""Возвращает температуру процессора"""
+#######################################
 def getCPUtemperature():
-        res = os.popen('vcgencmd measure_temp').readline()
-        return float(res.replace('temp=','').replace('\'C\n',''))
+    res = os.popen('vcgencmd measure_temp').readline()
+    return float(res.replace('temp=','').replace('\'C\n',''))
 
 
 ##################################
