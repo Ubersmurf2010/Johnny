@@ -32,7 +32,7 @@ class FrontCamFactory(GstRtspServer.RTSPMediaFactory):
                 GstRtspServer.RTSPMediaFactory.__init__(self)
 
         def do_create_element(self, url):
-                pipeline_str = "( v4l2src do-timestamp=true ! image/jpeg, width=1280, height=480, framerate=30/1 ! rtpjpegpay name=pay0 )"
+                pipeline_str = "( v4l2src do-timestamp=true ! image/jpeg, width=1280, height=480, framerate=30/1 ! jpegparse ! rtpjpegpay name=pay0 )"
                 print(pipeline_str)
                 return Gst.parse_launch(pipeline_str)
 
