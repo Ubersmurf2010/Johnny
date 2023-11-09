@@ -1,5 +1,6 @@
 # Johnny
 ПО работы робота телеприсутствия Johnny
+Исходный репозиторий [СКТБ ЦНИИ РТК](https://github.com/RTC-SCTB/JohnnyMoscow)
 ![Johnny](image/Johnny.jpg)
 
 Включение робота.
